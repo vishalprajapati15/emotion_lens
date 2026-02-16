@@ -16,11 +16,11 @@ const userSchema = new mongoose.Schema({
     },
     resetOtp:{
         type:String,
-        requireed: true
+        default: ''
     },
     resetOtpExpireAt:{
-        type:String,
-        requireed: true
+        type: Number,
+        default: 0
     },
 },{timestamps:true});
 
