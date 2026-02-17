@@ -57,6 +57,7 @@ A powerful backend service that analyzes YouTube comments using AI to extract se
 ## 📁 Project Structure
 
 ```
+backend
 ├── config/
 │   ├── db.js                  # MongoDB connection
 │   ├── huggingface.js         # Hugging Face client setup
