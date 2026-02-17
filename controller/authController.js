@@ -2,7 +2,7 @@ import userModel from "../model/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import sendEmail from '../config/nodemailer.js';
-import { PASSWORD_RESET_TEMPLATE } from '../config/emailTemplets.js'
+import { PASSWORD_RESET_TEMPLATE, WELCOME_TEMPLATE } from '../config/emailTemplets.js'
 
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -44,7 +44,10 @@ export const register = async (req, res) => {
         await sendEmail({
             to: email,
             subject: "Welcome to Emotion Lense",
-            text: `Welcome to MERN_AUTH. Your Profile has been created with email id : ${email}`
+            // text: `Welcome to MERN_AUTH. Your Profile has been created with email id : ${email}`,
+            html: WELCOME_TEMPLATE.
+            replace('{{username}}', user.name)
+            // .replace("{{loginLink}}", "https://emotionlense.com/dashboard")
         });
 
         return res.json({
@@ -89,7 +92,7 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' });
 
-        res.cookie({
+        res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
@@ -139,7 +142,7 @@ export const sendResetOtp = async (req, res) => {
             });
         }
 
-        const otp = String(Math.floor(100000 + Math.random * 900000));
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
         user.resetOtp = otp;
         user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
         await user.save();
@@ -148,9 +151,15 @@ export const sendResetOtp = async (req, res) => {
             to: user.email,
             subject: 'Password Reset OTP',
             html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp)
-        })
+        });
+
+        return res.json({
+            success: true,
+            message: 'OTP sent successfully!!'
+        });
+        
     } catch (error) {
-        res.json({ success: false, message: `Logout User Error: ${error.message}` });
+        res.json({ success: false, message: `Send reset OTP Error: ${error.message}` });
     }
 }
 
@@ -172,21 +181,22 @@ export const resetPassword = async (req, res)=>{
             });
         }
 
-        if(user.resetOtp !== otp){
-            return res.json({ success: false, message: 'Invalid OTP' });
+        const normalizedOtp = String(otp).trim();
+        if (user.resetOtp !== normalizedOtp) {
+            return res.json({ success: false, message: 'Invalid OTP!!' });
         }
 
         if(user.resetOtpExpireAt < Date.now()){
-            return res.json({ success: false, message: 'OTP is Expired' });
+            return res.json({ success: false, message: 'OTP is Expired!!' });
         }
 
-        const hashedPassword = bcrypt.hash(newPassword, 10);
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         user.password = hashedPassword;
         user.resetOtp = '';
         user.resetOtpExpireAt= 0;
 
-        user.save();
+        await user.save();
 
         res.json({success: true, message:'Password has been reset successfully!!'})
     } catch (error) {
