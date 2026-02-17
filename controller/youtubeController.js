@@ -20,7 +20,7 @@ export const getComments = async (req, res) => {
         // Fetch comments using the video ID
         const comments = await getYoutubeComments(videoId);
         console.log("comments : ", comments)
-        
+
         return res.json({
             success: true,
             videoId,
@@ -36,11 +36,11 @@ export const getComments = async (req, res) => {
     }
 };
 
-export const analyzeComments = async (req, res)=>{
+export const analyzeComments = async (req, res) => {
     try {
-        const {youtubeUrl} = req.body;
+        const { youtubeUrl } = req.body;
 
-        if(!youtubeUrl){
+        if (!youtubeUrl) {
             return res.json({
                 success: false,
                 message: "YouTube URL is required!!"
@@ -50,23 +50,79 @@ export const analyzeComments = async (req, res)=>{
         const videoId = extractVideoId(youtubeUrl);
 
         const comments = await getYoutubeComments(videoId);
+        
+        if (!comments || comments.length === 0) {
+            return res.json({
+                success: false,
+                message: "No comments found for this video!!"
+            });
+        }
+
         const sentiments = await analyzeSentiment(comments);
-        console.log("sentiments : ", sentiments)
+        console.log("sentiments : ", sentiments);
         const emotions = await analyzeEmotion(comments);
-        console.log("emotions : ", emotions)
+        console.log("emotions : ", emotions);
+
+        const stats = {
+            totalComments: comments.length,
+            sentiment: {},
+            emotion: {}
+        };
+
+        // Handle both single result and array of results
+        if (Array.isArray(sentiments)) {
+            sentiments.forEach((result) => {
+                if (result && Array.isArray(result)) {
+                    const label = result[0]?.label;
+                    if (label) {
+                        stats.sentiment[label] = (stats.sentiment[label] || 0) + 1;
+                    }
+                } else if (result?.label) {
+                    stats.sentiment[result.label] = (stats.sentiment[result.label] || 0) + 1;
+                }
+            });
+        }
+
+        if (Array.isArray(emotions)) {
+            emotions.forEach((result) => {
+                if (result && Array.isArray(result)) {
+                    const label = result[0]?.label;
+                    if (label) {
+                        stats.emotion[label] = (stats.emotion[label] || 0) + 1;
+                    }
+                } else if (result?.label) {
+                    stats.emotion[result.label] = (stats.emotion[result.label] || 0) + 1;
+                }
+            });
+        }
+
+        const statsPercentage = (data, total) => {
+            const formatted = {};
+            for (let key in data) {
+                formatted[key] = {
+                    count: data[key],
+                    percentage: ((data[key] / total) * 100).toFixed(2)
+                };
+            }
+            return formatted
+        }
+
+        stats.emotion = statsPercentage(stats.emotion, stats.totalComments);
+        stats.sentiment = statsPercentage(stats.sentiment, stats.totalComments);
+        console.log("Stats : ", stats);
 
         return res.json({
             success: true,
+            videoId,
             totalComments: comments.length,
-            sentiments,
-            emotions,
+            statistics: stats,
             message: "Comments analyzed successfully!!"
         });
 
     } catch (error) {
         return res.json({
             success: false,
-            message: error.message
+            message: `Comments Analysis Error: ${error.message}`
         });
     }
 }
