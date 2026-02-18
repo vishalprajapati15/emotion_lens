@@ -1,12 +1,35 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Sparkles, Menu, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Sparkles, Menu, X, LogOut } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
+    const [dropdownOpen, setDropdownOpen] = useState(false)
+    const dropdownRef = useRef(null)
     const navigate = useNavigate()
     const location = useLocation()
+    const { user, isAuthenticated, logout } = useAuth()
+
+    const handleLogout = async () => {
+        setDropdownOpen(false)
+        await logout()
+        navigate('/')
+    }
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handler = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropdownOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handler)
+        return () => document.removeEventListener('mousedown', handler)
+    }, [])
+
+    const userInitial = (user?.name || user?.email || 'U').trim().charAt(0).toUpperCase()
 
     const navLinks = [
         { name: 'Home', path: '/' },
@@ -97,21 +120,58 @@ const Navbar = () => {
                         ))}
                     </div>
 
-                    {/* Sign Up Button */}
+                    {/* Auth Area */}
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.6 }}
                         className="hidden md:block"
                     >
-                        <motion.button
-                            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(34, 211, 238, 0.4)" }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => navigate('/login')}
-                            className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 cursor-pointer"
-                        >
-                            Sign Up
-                        </motion.button>
+                        {isAuthenticated ? (
+                            <div className="relative" ref={dropdownRef}>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setDropdownOpen(v => !v)}
+                                    className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg shadow-cyan-500/30 select-none cursor-pointer"
+                                    title={user?.name || user?.email || 'User'}
+                                >
+                                    {userInitial}
+                                </motion.button>
+                                <AnimatePresence>
+                                    {dropdownOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                                            transition={{ duration: 0.15 }}
+                                            className="absolute right-0 mt-2 w-48 bg-slate-800/95 backdrop-blur-xl border border-cyan-500/20 rounded-xl shadow-xl shadow-cyan-500/10 overflow-hidden z-50"
+                                        >
+                                            <div className="px-4 py-3 border-b border-slate-700">
+                                                <p className="text-slate-200 font-semibold text-sm truncate">{user?.name || 'User'}</p>
+                                                <p className="text-slate-400 text-xs truncate">{user?.email}</p>
+                                            </div>
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center gap-2 px-4 py-3 text-sm text-pink-400 hover:bg-pink-500/10 transition-colors cursor-pointer"
+                                            >
+                                                <LogOut className="w-4 h-4" />
+                                                Sign Out
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <motion.button
+                                whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(34, 211, 238, 0.4)" }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => navigate('/login')}
+                                className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 cursor-pointer"
+                            >
+                                Sign Up
+                            </motion.button>
+                        )}
                     </motion.div>
 
                     {/* Mobile Menu Button */}
@@ -154,16 +214,39 @@ const Navbar = () => {
                             </Link>
                         </motion.div>
                     ))}
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                            navigate('/login')
-                            setIsOpen(false)
-                        }}
-                        className="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30"
-                    >
-                        Sign Up
-                    </motion.button>
+                    {isAuthenticated ? (
+                        <div className="flex items-center justify-between py-2 px-4 rounded-lg bg-slate-900/40 border border-cyan-500/20">
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg shadow-cyan-500/30 select-none"
+                                    title={user?.name || user?.email || 'User'}
+                                >
+                                    {userInitial}
+                                </div>
+                                <div className="text-slate-200 font-medium">
+                                    {user?.name || user?.email || 'User'}
+                                </div>
+                            </div>
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center gap-1 text-xs text-pink-400 hover:text-pink-300 transition-colors cursor-pointer"
+                            >
+                                <LogOut className="w-4 h-4" />
+                                Sign Out
+                            </button>
+                        </div>
+                    ) : (
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                                navigate('/login')
+                                setIsOpen(false)
+                            }}
+                            className="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30"
+                        >
+                            Sign Up
+                        </motion.button>
+                    )}
                 </div>
             </motion.div>
         </motion.nav>

@@ -15,7 +15,8 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin:true
+    origin:true,
+    credentials:true
 }));
 
 app.get('/', (req, res)=>{

@@ -16,7 +16,6 @@ export const getComments = async (req, res) => {
         const videoId = extractVideoId(youtubeUrl);
         console.log("videoId : ", videoId)
 
-        // Fetch comments 
         const comments = await getYoutubeComments(videoId);
         console.log("comments : ", comments)
 
@@ -48,25 +47,25 @@ export const analyzeComments = async (req, res) => {
 
         const videoId = extractVideoId(youtubeUrl);
 
-        const [comments, videoMetaData] = await Promise.all([
-            getYoutubeComments(videoId),
-            getYoutubeVideoDetails(videoId)
-        ]);
+        const comments = await getYoutubeComments(videoId);
 
-        if (!comments || comments.length === 0) {
+        // Limit to first 100 comments to stay within model token limits
+        const limitedComments = comments.slice(0, 100);
+
+        if (!limitedComments || limitedComments.length === 0) {
             return res.json({
                 success: false,
                 message: "No comments found for this video!!"
             });
         }
 
-        const sentiments = await analyzeSentiment(comments);
+        const sentiments = await analyzeSentiment(limitedComments);
         console.log("sentiments : ", sentiments);
-        const emotions = await analyzeEmotion(comments);
+        const emotions = await analyzeEmotion(limitedComments);
         console.log("emotions : ", emotions);
 
         const stats = {
-            totalComments: comments.length,
+            totalComments: limitedComments.length,
             sentiment: {},
             emotion: {}
         };
@@ -136,11 +135,10 @@ export const analyzeComments = async (req, res) => {
         return res.json({
             success: true,
             videoId,
-            totalComments: comments.length,
+            totalComments: limitedComments.length,
             statistics: stats,
             dominantEmotion,
             dominantSentiment,
-            videoMetaData,
             message: "Comments analyzed successfully!!"
         });
 

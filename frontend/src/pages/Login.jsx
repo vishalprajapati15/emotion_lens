@@ -2,22 +2,44 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Lock, User, Eye, EyeOff, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import toast from 'react-hot-toast'
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
-    confirmPassword: ''
+    password: ''
   })
   const navigate = useNavigate()
+  const { login, register } = useAuth()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
+
+    setIsLoading(true)
+    try {
+      let result
+      if (isLogin) {
+        result = await login({ email: formData.email, password: formData.password })
+      } else {
+        result = await register({ name: formData.name, email: formData.email, password: formData.password })
+      }
+
+      if (result?.success) {
+        toast.success(isLogin ? 'Welcome back!' : 'Account created successfully!')
+        navigate('/analysis')
+      } else {
+        toast.error(result?.message || (isLogin ? 'Login failed.' : 'Registration failed.'))
+      }
+    } catch (err) {
+      toast.error(err?.message || 'Something went wrong.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleChange = (e) => {
@@ -32,8 +54,7 @@ const Login = () => {
     setFormData({
       name: '',
       email: '',
-      password: '',
-      confirmPassword: ''
+      password: ''
     })
   }
 
@@ -51,7 +72,7 @@ const Login = () => {
           <div className="text-center mb-8">
             <motion.div
               animate={{ rotate: [0, 360] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
               className="inline-block mb-4"
             >
               <Sparkles className="w-12 h-12 text-cyan-400" />
@@ -142,6 +163,7 @@ const Login = () => {
               <div className="flex justify-end">
                 <button
                   type="button"
+                  onClick={() => navigate('/reset-password')}
                   className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
                 >
                   Forgot Password?
@@ -154,9 +176,12 @@ const Login = () => {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 cursor-pointer"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {isLoading
+                ? (isLogin ? 'Signing In…' : 'Creating Account…')
+                : (isLogin ? 'Sign In' : 'Create Account')}
             </motion.button>
           </form>
 

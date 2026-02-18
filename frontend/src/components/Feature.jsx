@@ -148,6 +148,7 @@ const Feature = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all cursor-pointer duration-300"
+                        onClick={()=>navigate('/analysis')}
                     >
                         Get Started Now
                     </motion.button>

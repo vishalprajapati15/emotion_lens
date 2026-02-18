@@ -41,14 +41,16 @@ export const register = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        await sendEmail({
-            to: email,
-            subject: "Welcome to Emotion Lense",
-            // text: `Welcome to MERN_AUTH. Your Profile has been created with email id : ${email}`,
-            html: WELCOME_TEMPLATE
-            .replace('{{username}}', user.name)
-            // .replace("{{loginLink}}", "https://emotionlense.com/dashboard")
-        });
+        // Send welcome email — non-blocking (fails silently in dev/sandbox)
+        try {
+            await sendEmail({
+                to: email,
+                subject: "Welcome to Emotion Lense",
+                html: WELCOME_TEMPLATE.replace('{{username}}', user.name)
+            });
+        } catch (emailErr) {
+            console.warn('Welcome email skipped:', emailErr.message);
+        }
 
         return res.json({
             success: true,
@@ -201,5 +203,21 @@ export const resetPassword = async (req, res)=>{
         res.json({success: true, message:'Password has been reset successfully!!'})
     } catch (error) {
         res.json({ success: false, message: ` Reset password Error: ${error.message}` });
+    }
+}
+
+export const me = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.userId).select('name email');
+        if (!user) {
+            return res.json({ success: false, message: 'User not found!!' });
+        }
+
+        return res.json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        return res.json({ success: false, message: `Get Me Error: ${error.message}` });
     }
 }

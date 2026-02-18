@@ -7,11 +7,12 @@ import {
 } from 'recharts'
 import {
     Youtube, Sparkles, TrendingUp, Heart,
-    Search, AlertCircle, MessageSquare,
+    Search, MessageSquare,
     ThumbsUp, Eye, Loader2, CheckCircle2,
     XCircle, Play, Users
 } from 'lucide-react'
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const SENTIMENT_COLORS = {
     POSITIVE: '#22d3ee',
@@ -97,7 +98,6 @@ const Analysis = () => {
     const [fetchStep, setFetchStep] = useState(0)
     const [analyzeStep, setAnalyzeStep] = useState(0)
 
-    const [error, setError] = useState('')
     const [videoData, setVideoData] = useState(null)
     const [result, setResult] = useState(null)
 
@@ -114,10 +114,9 @@ const Analysis = () => {
     // ── Stage 1: Fetch video metadata ──────────────────────────────────────
     const handleFetchVideo = async () => {
         if (!url.trim()) {
-            setError('Please paste a YouTube URL first.')
+            toast.error('Please paste a YouTube URL first.')
             return
         }
-        setError('')
         setVideoData(null)
         setResult(null)
         setStage('fetching')
@@ -138,7 +137,7 @@ const Analysis = () => {
             setVideoData(data.videoMetaData)
             setStage('preview')
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Something went wrong.')
+            toast.error(err.response?.data?.message || err.message || 'Something went wrong.')
             setStage('idle')
         } finally {
             setFetchStep(0)
@@ -147,7 +146,6 @@ const Analysis = () => {
 
     // ── Stage 2: Analyze emotions ──────────────────────────────────────────
     const handleAnalyzeEmotions = async () => {
-        setError('')
         setResult(null)
         setStage('analyzing')
         setAnalyzeStep(1)
@@ -167,10 +165,11 @@ const Analysis = () => {
             setAnalyzeStep(3)
             await new Promise(r => setTimeout(r, 500))
 
+            toast.success('Analysis complete!')
             setResult(data)
             setStage('results')
         } catch (err) {
-            setError(err.response?.data?.message || err.message || 'Something went wrong.')
+            toast.error(err.response?.data?.message || err.message || 'Something went wrong.')
             setStage('preview')
         } finally {
             setAnalyzeStep(0)
@@ -184,6 +183,7 @@ const Analysis = () => {
     const dominantEmotion = getDominant(emotionArr)
 
     const hasComments = videoData?.commentCount > 0
+
 
     return (
         <div className="min-h-screen px-4 py-16">
@@ -233,7 +233,7 @@ const Analysis = () => {
                             <input
                                 type="url"
                                 value={url}
-                                onChange={e => { setUrl(e.target.value); setError('') }}
+                                onChange={e => setUrl(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && stage === 'idle' && handleFetchVideo()}
                                 placeholder="https://www.youtube.com/watch?v=..."
                                 disabled={stage === 'fetching' || stage === 'analyzing'}
@@ -254,19 +254,6 @@ const Analysis = () => {
 
                     <p className="text-slate-500 text-xs mt-3 pl-1">We only analyze public videos with visible comments.</p>
 
-                    <AnimatePresence>
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="mt-4 flex items-center gap-2 text-pink-400 bg-pink-500/10 border border-pink-500/20 rounded-lg px-4 py-3 text-sm"
-                            >
-                                <AlertCircle className="w-4 h-4 shrink-0" />
-                                {error}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </motion.div>
 
                 {/* ── Fetch loading ──────────────────────────────────────── */}
