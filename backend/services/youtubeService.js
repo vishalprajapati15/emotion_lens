@@ -76,6 +76,7 @@ export const getYoutubeVideoDetails = async (videoId) => {
             snippet.thumbnails?.default?.url,
         views: Number(stats.viewCount) || 0,
         likes: Number(stats.likeCount) || 0,
+        commentCount: Number(stats.commentCount) || 0,
         publishedAt: snippet.publishedAt
     };
 };
