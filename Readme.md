@@ -99,8 +99,8 @@ backend
 Create a `.env` file in the root directory:
 
 ```env
-PORT=4001
-MONGODB_URI=mongodb://localhost:27017
+PORT=port
+MONGODB_URI=mongodb_uri
 JWT_SECRET_KEY=your_jwt_secret_key
 HUGGING_FACE_TOKEN=your_huggingface_token
 YOUTUBE_API_KEY=your_youtube_api_key
@@ -120,7 +120,6 @@ npm install
 npm start
 ```
 
-Server will run on `http://localhost:4001` (or your configured PORT)
 
 ## 📡 API Endpoints
 
