@@ -87,6 +87,7 @@ export const analyzeComments = async (req, res) => {
         const analysisDoc = await analysisModel.create({
             userId: req.userId,
             videoMetaDataId: savedMetaData._id,
+            videoId,
             totalComments: comments.length,
             sentimentPositiveCount: sentimentStats.POSITIVE?.count ?? 0,
             sentimentPositivePercentage: sentimentStats.POSITIVE?.percentage ?? 0,

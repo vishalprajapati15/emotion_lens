@@ -9,8 +9,12 @@ const analysisSchema = new mongoose.Schema({
     },
     videoMetaDataId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'videoMetaData',
-        required: true
+        ref: 'videoMetaData'
+    },
+    videoId: {
+        type: String,
+        required: true,
+        index: true
     },
     totalComments: {
         type: Number,

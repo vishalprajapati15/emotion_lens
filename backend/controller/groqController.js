@@ -17,9 +17,17 @@ export const generateAnalysisSummary = async (req, res) => {
 
         const videoId = extractVideoId(youtubeUrl);
 
-        const metaData = await videoMetaDataModel
-            .findOne({ videoId, userId: req.userId })
-            .sort({ createdAt: -1 });
+        // Run both queries in parallel — videoId on analysisModel avoids the
+        // sequential dependency (previously had to fetch metaData first just to
+        // get its _id, then use it to look up analysis).
+        const [metaData, analysis] = await Promise.all([
+            videoMetaDataModel
+                .findOne({ videoId, userId: req.userId })
+                .sort({ createdAt: -1 }),
+            analysisModel
+                .findOne({ videoId, userId: req.userId })
+                .sort({ createdAt: -1 })
+        ]);
 
         if (!metaData) {
             return res.json({
@@ -27,10 +35,6 @@ export const generateAnalysisSummary = async (req, res) => {
                 message: 'Video metadata not found!! Please fetch the video first.'
             });
         }
-
-        const analysis = await analysisModel
-            .findOne({ videoMetaDataId: metaData._id, userId: req.userId })
-            .sort({ createdAt: -1 });
 
         if (!analysis) {
             return res.json({

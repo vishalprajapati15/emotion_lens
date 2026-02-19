@@ -9,7 +9,8 @@ const videoMetaDataSchema = new mongoose.Schema({
     },
     videoId: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     title: {
         type: String,
