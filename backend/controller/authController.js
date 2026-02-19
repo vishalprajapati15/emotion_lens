@@ -149,11 +149,15 @@ export const sendResetOtp = async (req, res) => {
         user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
         await user.save();
 
-        await sendEmail({
-            to: user.email,
-            subject: 'Password Reset OTP',
-            html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp)
-        });
+        try {
+            await sendEmail({
+                to: user.email,
+                subject: 'Password Reset OTP',
+                html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp)
+            });
+        } catch (emailErr) {
+            console.warn('Reset OTP email skipped:', emailErr.message);
+        }
 
         return res.json({
             success: true,

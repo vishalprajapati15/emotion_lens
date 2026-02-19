@@ -1,5 +1,6 @@
 import express from 'express';
-import { getComments, analyzeComments, getVideoMetaData } from '../controller/youtubeController.js';
+import { getComments, getVideoMetaData } from '../controller/youtubeController.js';
+import { analyzeComments } from '../controller/huggingfaceController.js';
 import { userAuth } from '../middleware/userAuth.js';
 
 const youtubeRouter = express.Router();

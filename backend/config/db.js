@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 
-const connectDB= async ()=>{
+const connectDB = async () => {
     try {
-        await mongoose.connect(`${process.env.MONGODB_URI}/emotion_lense`)
-        .then(()=>{
-            console.log("Database Connected Succesfully!!");
-        });
+        await mongoose.connect(`${process.env.MONGODB_URI}/emotion_lense`);
+        console.log("Database Connected Successfully!!");
     } catch (error) {
-        console.log("Database Connetction error: ", error);
+        console.error("Database Connection Error: ", error.message);
+        process.exit(1);
     }
 }
 export default connectDB;
