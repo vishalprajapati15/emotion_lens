@@ -47,10 +47,10 @@ const Footer = () => {
                     <div className="space-y-4">
                         <h3 className="text-slate-200 font-semibold">Connect</h3>
                         <div className="flex space-x-4">
-                            <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors">
+                            <a href="https://github.com/vishalprajapati15" className="text-slate-400 hover:text-cyan-400 transition-colors">
                                 <Github className="w-5 h-5" />
                             </a>
-                            <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors">
+                            <a href="https://www.linkedin.com/in/vishalprajapati15/" className="text-slate-400 hover:text-cyan-400 transition-colors">
                                 <Linkedin className="w-5 h-5" />
                             </a>
                             <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors">

@@ -9,8 +9,9 @@ import {
 import toast from 'react-hot-toast'
 import { useAuth } from '../hooks/useAuth'
 import { fetchVideoCards } from '../services/videoService'
+import { SENTIMENT_CONFIG, EMOTION_CONFIG } from '../components/videoDetails/constants'
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+// helpers 
 
 const formatNumber = (n) => {
   if (n == null) return '—'
@@ -24,21 +25,6 @@ const formatDate = (iso) => {
   return new Date(iso).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric'
   })
-}
-
-const SENTIMENT_CONFIG = {
-  POSITIVE: { label: 'Positive', color: 'text-emerald-400', bg: 'bg-emerald-400/10 border-emerald-400/30', dot: 'bg-emerald-400' },
-  NEUTRAL:  { label: 'Neutral',  color: 'text-blue-400',    bg: 'bg-blue-400/10 border-blue-400/30',       dot: 'bg-blue-400'   },
-  NEGATIVE: { label: 'Negative', color: 'text-rose-400',    bg: 'bg-rose-400/10 border-rose-400/30',       dot: 'bg-rose-400'   },
-}
-
-const EMOTION_CONFIG = {
-  joy:      { emoji: '😄', color: 'text-yellow-400', bg: 'bg-yellow-400/10 border-yellow-400/30' },
-  anger:    { emoji: '😠', color: 'text-red-400',    bg: 'bg-red-400/10 border-red-400/30'       },
-  sadness:  { emoji: '😢', color: 'text-blue-400',   bg: 'bg-blue-400/10 border-blue-400/30'     },
-  surprise: { emoji: '😲', color: 'text-purple-400', bg: 'bg-purple-400/10 border-purple-400/30' },
-  fear:     { emoji: '😨', color: 'text-orange-400', bg: 'bg-orange-400/10 border-orange-400/30' },
-  disgust:  { emoji: '🤢', color: 'text-green-400',  bg: 'bg-green-400/10 border-green-400/30'   },
 }
 
 const getSentiment = (key) =>
@@ -274,7 +260,7 @@ const DashBoard = () => {
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => navigate('/analysis')}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm cursor-pointer
             bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500
             text-white shadow-lg shadow-cyan-500/25 transition-all duration-200 self-start sm:self-auto"
         >

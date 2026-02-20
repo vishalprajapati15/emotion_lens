@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-    Youtube, Sparkles, Search, MessageSquare,
-    Loader2, CheckCircle2, XCircle, Activity, Play
+    Youtube, Sparkles, Search,
+    Loader2, CheckCircle2, XCircle, Activity
 } from 'lucide-react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
@@ -13,6 +13,7 @@ import DominantCards from '../components/videoDetails/DominantCards'
 import AiSummary from '../components/videoDetails/AiSummary'
 import VideoMetrics from '../components/videoDetails/VideoMetrics'
 import { generateAnalysisSummaryByUrl, fetchVideoMetricsByUrl } from '../services/videoService'
+import { FETCH_STEPS, ANALYZE_STEPS } from '../components/videoDetails/constants'
 
 // ── extract video ID from YouTube URL ───────────────────────────────────────
 const extractVideoId = (rawUrl) => {
@@ -21,17 +22,6 @@ const extractVideoId = (rawUrl) => {
         return u.searchParams.get('v') ?? u.pathname.split('/').pop()
     } catch { return '' }
 }
-
-const FETCH_STEPS = [
-    { id: 1, label: 'Validating YouTube URL…', icon: Youtube },
-    { id: 2, label: 'Fetching video details…', icon: Play },
-]
-
-const ANALYZE_STEPS = [
-    { id: 1, label: 'Fetching comments…', icon: MessageSquare },
-    { id: 2, label: 'Running AI sentiment model…', icon: Activity },
-    { id: 3, label: 'Generating insights…', icon: Sparkles },
-]
 
 const LoadingCard = ({ steps, currentStep }) => (
     <motion.div
@@ -203,10 +193,10 @@ const Analysis = () => {
     // Normalized shape expected by SentimentStats + DominantCards
     const analysisData = result ? {
         totalComments: result.totalComments,
-        sentimentPositivePercentage: result.statistics?.sentiment?.positive?.percentage ?? 0,
-        sentimentPositiveCount: result.statistics?.sentiment?.positive?.count ?? 0,
-        sentimentNegativePercentage: result.statistics?.sentiment?.negative?.percentage ?? 0,
-        sentimentNegativeCount: result.statistics?.sentiment?.negative?.count ?? 0,
+        sentimentPositivePercentage: result.statistics?.sentiment?.POSITIVE?.percentage ?? 0,
+        sentimentPositiveCount: result.statistics?.sentiment?.POSITIVE?.count ?? 0,
+        sentimentNegativePercentage: result.statistics?.sentiment?.NEGATIVE?.percentage ?? 0,
+        sentimentNegativeCount: result.statistics?.sentiment?.NEGATIVE?.count ?? 0,
         dominantSentimentLabel: dominantSentiment?.name,
         dominantSentimentCount: dominantSentiment?.value,
         dominantEmotionLabel: dominantEmotion?.name,
