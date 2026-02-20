@@ -116,7 +116,6 @@ export const analyzeComments = async (req, res) => {
                 dominantEmotionCount: 0,
                 topPositiveComments: [],
                 topNegativeComments: [],
-                summary: '',
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }
         );
@@ -208,6 +207,7 @@ export const analyzeComments = async (req, res) => {
             dominantSentiment,
             topPositiveComments: topPositive,
             topNegativeComments: topNegative,
+            summary: analysisDoc.summary ?? '',
             message: "Comments analyzed successfully!!"
         });
 

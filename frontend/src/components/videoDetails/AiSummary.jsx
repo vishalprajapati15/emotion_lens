@@ -2,10 +2,6 @@ import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Loader2, Wand2 } from 'lucide-react'
 
-// Props:
-//   summary         – string (empty = not generated yet)
-//   summarizing     – bool
-//   onGenerate      – () => void
 
 const AiSummary = ({ summary, summarizing, onGenerate }) => (
   <motion.div
@@ -26,7 +22,7 @@ const AiSummary = ({ summary, summarizing, onGenerate }) => (
       {!summarizing && (
         <button
           onClick={onGenerate}
-          className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg font-medium
+          className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer
             bg-cyan-500/10 border border-cyan-500/30 text-cyan-400
             hover:bg-cyan-500/20 transition-colors duration-200"
         >

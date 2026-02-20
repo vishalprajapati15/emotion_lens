@@ -143,6 +143,7 @@ const Analysis = () => {
 
             toast.success('Analysis complete!')
             setResult(data)
+            setSummary(data?.summary ?? '')
             setStage('results')
         } catch (err) {
             toast.error(err.response?.data?.message || err.message || 'Something went wrong.')
