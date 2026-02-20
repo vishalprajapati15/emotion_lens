@@ -245,7 +245,7 @@ $$
 Ratio of positive comments to negative comments.
 
 $$
-\text{Positive Ratio} = \begin{cases} \text{positiveCount} & \text{if negativeCount} = 0 \\ \dfrac{\text{positiveCount}}{\text{negativeCount}} & \text{otherwise} \end{cases}
+\text{Positive Ratio} = \begin{cases} \text{positiveCount} & \text{if negativeCount} = 0;  \\ \dfrac{\text{positiveCount}}{\text{negativeCount}} & \text{otherwise} \end{cases}
 $$
 
 > A ratio > 1 means more positive than negative; a ratio of 5 means 5× more positive comments than negative.
