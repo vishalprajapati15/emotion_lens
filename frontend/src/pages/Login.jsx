@@ -31,7 +31,7 @@ const Login = () => {
 
       if (result?.success) {
         toast.success(isLogin ? 'Welcome back!' : 'Account created successfully!')
-        navigate('/analysis')
+        navigate('/dashboard')
       } else {
         toast.error(result?.message || (isLogin ? 'Login failed.' : 'Registration failed.'))
       }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, Menu, X, LogOut } from 'lucide-react'
+import { Sparkles, Menu, X, LogOut, LayoutDashboard } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
 const Navbar = () => {
@@ -152,6 +152,13 @@ const Navbar = () => {
                                                 <p className="text-slate-400 text-xs truncate">{user?.email}</p>
                                             </div>
                                             <button
+                                                onClick={() => { setDropdownOpen(false); navigate('/dashboard') }}
+                                                className="w-full flex items-center gap-2 px-4 py-3 text-sm text-cyan-400 hover:bg-cyan-500/10 transition-colors cursor-pointer border-b border-slate-700/50"
+                                            >
+                                                <LayoutDashboard className="w-4 h-4" />
+                                                Dashboard
+                                            </button>
+                                            <button
                                                 onClick={handleLogout}
                                                 className="w-full flex items-center gap-2 px-4 py-3 text-sm text-pink-400 hover:bg-pink-500/10 transition-colors cursor-pointer"
                                             >
@@ -223,17 +230,28 @@ const Navbar = () => {
                                 >
                                     {userInitial}
                                 </div>
-                                <div className="text-slate-200 font-medium">
-                                    {user?.name || user?.email || 'User'}
+                                <div>
+                                    <div className="text-slate-200 font-medium text-sm">{user?.name || user?.email || 'User'}</div>
+                                    <div className="text-slate-400 text-xs truncate max-w-[140px]">{user?.email}</div>
                                 </div>
                             </div>
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center gap-1 text-xs text-pink-400 hover:text-pink-300 transition-colors cursor-pointer"
-                            >
-                                <LogOut className="w-4 h-4" />
-                                Sign Out
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => { navigate('/dashboard'); setIsOpen(false) }}
+                                    className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
+                                >
+                                    <LayoutDashboard className="w-4 h-4" />
+                                    Dashboard
+                                </button>
+                                <span className="text-slate-600">|</span>
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-1 text-xs text-pink-400 hover:text-pink-300 transition-colors cursor-pointer"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    Sign Out
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         <motion.button

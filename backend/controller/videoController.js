@@ -2,7 +2,7 @@ import { getCardPreviewData, getFullVideoAndAnalysisDetails } from "../services/
 
 export const fetchCardData = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.userId;
         if (!userId) {
             return res.json({
                 success: false,
@@ -12,18 +12,11 @@ export const fetchCardData = async (req, res) => {
 
         const videos = await getCardPreviewData(userId);
 
-        if (!videos || videos.length === 0) {
-            return res.json({
-                success: false,
-                message: 'No Video found!!'
-            });
-        }
-
         return res.json({
             success: true,
             totalVideos: videos.length,
             videos,
-            message: 'All videos fetch successfully!!'
+            message: videos.length > 0 ? 'All videos fetched successfully!!' : 'No videos found!!'
         });
     } catch (error) {
         return res.json({
@@ -35,7 +28,7 @@ export const fetchCardData = async (req, res) => {
 
 export const fetchFullVideoDetails = async (req, res)=>{
     try {
-        const userId = req.user._id;
+        const userId = req.userId;
         if(!userId){
             return res.json({
                 success: false,

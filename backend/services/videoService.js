@@ -8,24 +8,23 @@ export const getCardPreviewData = async (userId) => {
             select: "title channelName thumbnail views likes publishedAt"
         }).
         select(
-            "videoId totalComments dominantSentimentLabel dominantEmotionLabel sentimentPositivePercentage sentimentNegativePercentage"
+            "videoId videoMetaDataId totalComments dominantSentimentLabel dominantEmotionLabel sentimentPositivePercentage sentimentNegativePercentage"
         )
         .sort({ createdAt: -1 })
         .lean();
 
     if (!analysis || analysis.length === 0) {
-        throw new Error("No video found!!");
+        return [];
     }
 
     return analysis.map((item) => ({
         videoId: item.videoId,
-        title: item.title,
-        channelName: item.channelName,
-        thumbnail: item.thumbnail,
-        views: item.views,
-        likes: item.likes,
-        publishedAt: item.publishedAt,
-        views: item.views,
+        title: item.videoMetaDataId?.title,
+        channelName: item.videoMetaDataId?.channelName,
+        thumbnail: item.videoMetaDataId?.thumbnail,
+        views: item.videoMetaDataId?.views,
+        likes: item.videoMetaDataId?.likes,
+        publishedAt: item.videoMetaDataId?.publishedAt,
         totalComments: item.totalComments,
         dominantSentiment: item.dominantSentimentLabel,
         dominantEmotion: item.dominantEmotionLabel,
