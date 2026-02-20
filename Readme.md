@@ -212,11 +212,7 @@ All metrics are computed server-side in `backend/controller/huggingfaceControlle
 
 ### 1. Sentiment / Emotion Percentage
 
-For each label `L` (e.g. POSITIVE, NEUTRAL, NEGATIVE, joy, anger, …):
-
-$$
-\text{Percentage}(L) = \left(\frac{\text{count}(L)}{\text{totalComments}}\right) \times 100 \quad \text{(rounded to 2 decimal places)}
-$$
+For each label  (e.g. POSITIVE, NEUTRAL, NEGATIVE, joy, anger, …):
 
 ---
 
