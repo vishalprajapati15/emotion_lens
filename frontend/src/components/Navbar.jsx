@@ -32,32 +32,39 @@ const Navbar = () => {
     const userInitial = (user?.name || user?.email || 'U').trim().charAt(0).toUpperCase()
 
     const navLinks = [
-        { name: 'Home', path: '/' },
-        { name: 'Feature', path: '#features' },
-        { name: 'Pricing', path: '#pricing' },
+        { name: 'Home', path: isAuthenticated ? '/home' : '/' },
+        { name: 'Feature', path: isAuthenticated ? '/home#features' : '#features' },
+        { name: 'Pricing', path: isAuthenticated ? '/home#pricing' : '#pricing' },
         { name: 'Contact Us', path: '/contact' }
     ]
 
     const toggleMenu = () => setIsOpen(!isOpen)
 
     const handleNavClick = (e, path) => {
-        if (path.startsWith('#')) {
+        const hashMatch = path.match(/#(\w+)$/)
+        if (hashMatch) {
             e.preventDefault()
-            if (location.pathname !== '/') {
-                navigate(`/${path}`)
+            const hash = `#${hashMatch[1]}`
+            const basePath = path.replace(hash, '')
+            
+            if (location.pathname === basePath || (basePath === '/' && location.pathname === '/')) {
+                // Already on the right page, just scroll
+                setTimeout(() => {
+                    const element = document.querySelector(hash)
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    }
+                }, 50)
             } else {
-                // If on home page, just scroll
-                const element = document.querySelector(path)
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }
+                // Navigate to the page with hash
+                navigate(path)
             }
         }
         setIsOpen(false)
     }
 
     useEffect(() => {
-        if (location.hash && location.pathname === '/') {
+        if (location.hash && (location.pathname === '/' || location.pathname === '/home')) {
             setTimeout(() => {
                 const element = document.querySelector(location.hash)
                 if (element) {
@@ -81,7 +88,7 @@ const Navbar = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="flex items-center space-x-2 cursor-pointer"
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate(isAuthenticated ? '/home' : '/')}
                     >
                         <motion.div
                             animate={{ rotate: [0, 360] }}

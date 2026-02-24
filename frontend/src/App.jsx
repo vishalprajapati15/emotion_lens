@@ -20,11 +20,20 @@ function RootRedirect() {
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+        {/* Spinning texture background */}
+        <div className="absolute inset-0 opacity-5 spin-texture"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(34,211,238,0.8) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(168,85,247,0.8) 0%, transparent 50%)',
+            backgroundSize: '200% 200%',
+          }}
+        />
+        
         <Navbar />
-        <main className="flex-grow">
+        <main className="flex-grow relative z-10">
           <Routes>
             <Route path="/" element={<RootRedirect />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<DashBoard />} />
