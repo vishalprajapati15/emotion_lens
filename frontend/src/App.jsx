@@ -17,6 +17,13 @@ function RootRedirect() {
   return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Home />
 }
 
+// Protects routes that require authentication
+function ProtectedRoute({ element }) {
+  const { isAuthenticated, isLoading } = useAuth()
+  if (isLoading) return null  // wait for auth check
+  return isAuthenticated ? element : <Navigate to="/login" replace />
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -38,7 +45,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/video/:videoId" element={<VideoDetails />} />
-            <Route path="/analysis" element={<Analysis />} />
+            <Route path="/analysis" element={<ProtectedRoute element={<Analysis />} />} />
             <Route path="/contact" element={<ContactUs />} />
           </Routes>
         </main>

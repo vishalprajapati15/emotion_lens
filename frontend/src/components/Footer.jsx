@@ -1,9 +1,17 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Sparkles, Mail, Github, Linkedin, Twitter } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
 
 const Footer = () => {
+    const navigate = useNavigate()
+    const { isAuthenticated } = useAuth()
+
+    const handleHomeClick = (e) => {
+        e.preventDefault()
+        navigate(isAuthenticated ? '/home' : '/')
+    }
     return (
         <footer className="bg-slate-900 border-t border-cyan-500/20 mt-auto">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -31,14 +39,17 @@ const Footer = () => {
                     <div className="space-y-4">
                         <h3 className="text-slate-200 font-semibold">Quick Links</h3>
                         <div className="flex flex-col space-y-2">
-                            <Link to="/" className="text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+                            <button onClick={handleHomeClick} className="text-slate-400 hover:text-cyan-400 transition-colors text-sm cursor-pointer text-left">
                                 Home
-                            </Link>
-                            <Link to="/dashboard" className="text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+                            </button>
+                            <Link to="/dashboard" className="text-slate-400 hover:text-cyan-400 transition-colors text-sm cursor-pointer">
                                 Dashboard
                             </Link>
-                            <Link to="/analysis" className="text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+                            <Link to="/analysis" className="text-slate-400 hover:text-cyan-400 transition-colors text-sm cursor-pointer">
                                 Analysis
+                            </Link>
+                            <Link to="/contact" className="text-slate-400 hover:text-cyan-400 transition-colors text-sm cursor-pointer">
+                                Contact Us
                             </Link>
                         </div>
                     </div>
@@ -47,16 +58,16 @@ const Footer = () => {
                     <div className="space-y-4">
                         <h3 className="text-slate-200 font-semibold">Connect</h3>
                         <div className="flex space-x-4">
-                            <a href="https://github.com/vishalprajapati15" className="text-slate-400 hover:text-cyan-400 transition-colors">
+                            <a href="https://github.com/vishalprajapati15" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer">
                                 <Github className="w-5 h-5" />
                             </a>
-                            <a href="https://www.linkedin.com/in/vishalprajapati15/" className="text-slate-400 hover:text-cyan-400 transition-colors">
+                            <a href="https://www.linkedin.com/in/vishalprajapati15/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer">
                                 <Linkedin className="w-5 h-5" />
                             </a>
-                            <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors">
+                            <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer">
                                 <Twitter className="w-5 h-5" />
                             </a>
-                            <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors">
+                            <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer">
                                 <Mail className="w-5 h-5" />
                             </a>
                         </div>
