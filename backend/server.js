@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
     res.send("API is working...");
 });
 
-app.use('/api/health', healthRouter);
+app.use('/api', healthRouter);
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter);
 app.use('/api/youtube', youtubeRouter);

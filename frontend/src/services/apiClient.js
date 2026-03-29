@@ -18,7 +18,7 @@ export const wakeServer = async ()=>{
   const hasWoken = sessionStorage.getItem('serverWoken');
   if(!hasWoken){
     try {
-      await apiClient.get('/api/health/ping');
+      await apiClient.get('/api/health');
       sessionStorage.setItem('serverWoken', "true");
       console.log('Server awakened successfully!!');
     } catch (error) {

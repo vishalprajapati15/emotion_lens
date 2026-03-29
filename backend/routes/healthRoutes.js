@@ -2,10 +2,12 @@ import express from 'express';
 
 const healthRouter = express.Router();
 
-healthRouter.get('/ping', (req, res)=>{
-    res.json({
+healthRouter.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'OK',
         success: true,
-        message:'Server is Alive!!'
+        message: 'Server is awake!',
+        timestamp: new Date()
     });
 });
 export default healthRouter;
